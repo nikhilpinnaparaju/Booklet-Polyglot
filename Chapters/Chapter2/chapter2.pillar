@@ -113,6 +113,13 @@ tagger := PGNltkPosTagger new.
 tagger raw_parse: firstSent
 ]]]
 
+!!! Ngrams
+An n-gram is a continuous sequence of n items of a given text. N-grams would be a loop that iterates over an array of words and creates tuples of size n (n-grams).
+Ngrams form the base to build a language model that can be used to predict next words given some previous words / context.
+
+!!! Ngram language Model
+
+
 !!! Some useful Metrics and Mathematical functions
 
 In NLP, once we have vector representations of either words or documents it is useful to have metrics defined to evaluate how similar 2 entities are.
@@ -165,7 +172,7 @@ which returns,
 
 !!!! Manhattan Distance
 Manhattan distance is a metric in which the distance between two points is the sum of the absolute differences of their Cartesian coordinates. In a simple way of saying it is the total sum of the difference between the x-coordinates and y-coordinates.
-
+For example, between arrays #(10 20 10) and #(10 20 20) the Manhattan distance would be equal to ==abs(10-10) + abs(20-20) + abs(10-20)==
 
 This can be done as,
 ==Usage== 
