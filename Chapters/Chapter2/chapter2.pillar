@@ -47,13 +47,61 @@ Tokenization in ''Polyglot'' can be done using the ''PGTokenizer'' package. ''PG
 
 ==Usage== 
 [[[
-|file brown tokenizer tokens LM temp|
+|file brown tokenizer tokens |
 
 "Loading the Data into our Pharo image"
-file := <path_to_training_corpus> asFileReference.
+file := '/home/cyber/Desktop/brown.txt' asFileReference.
 brown := file contents.
 
 "Converting raw text into an array of tokens"
 tokenizer := PGTokenizer new.
 tokens := tokenizer tokenize: brown.
 ]]]
+
+!!! Stemming
+In linguistic morphology and information retrieval, stemming is the process of reducing inflected words to their word stem, base or root form. 
+Stemming is used in tasks like building inverted indices for a search english. 
+Let's take a small sample from our Brown corpus and apply stemming to all the words in that.
+
+To do this ''PGPorterStemmer'' in the ''PGStemmer'' package in ''Polyglot''. This utilizes the base code from the Moose Information retrieval algos package for Pharo.
+
+==Usage==
+[[[
+|file brown tokenizer tokens firstSent|
+
+"Loading the Data into our Pharo image"
+file := '/home/cyber/Desktop/brown.txt' asFileReference.
+brown := file contents.
+
+"Converting raw text into an array of tokens"
+tokenizer := PGTokenizer new.
+tokens := tokenizer tokenize: brown.
+
+firstSent := tokens at: 1.
+firstSent collect: [ :each | PGPorterStemmer stemOf: each ]
+]]]
+
+!!! Part of Speech Tagging (POS Tagging)
+POS Tagging is the task of identifying the part-of-speech of every word in a particular sentence. The difficulty in the task lies in the fact that the same word in various sentences would be different parts of speech.
+Part of Speech tagging can be done using ''PGPosTagger'' in ''Polyglot''.
+Now let's say we want to POS Tag our Brown corpus.
+
+==Usage==
+[[[
+|file brown tokenizer tokens firstSent tagger|
+
+"Loading the Data into our Pharo image"
+file := '/home/cyber/Desktop/brown.txt' asFileReference.
+brown := file contents.
+
+"Converting raw text into an array of tokens"
+tokenizer := PGTokenizer new.
+tokens := tokenizer sentenceTokenize: brown.
+
+firstSent := tokens at: 1.
+tagger := PGNltkPosTagger new.
+tagger raw_parse: firstSent
+]]]
+
+!!! Named Entity Recognition (NER)
+Named-entity recognition is the task of locating and classifying named entity mentions in unstructured text into categories like names, organizations, locations, time expressions, etc. 
