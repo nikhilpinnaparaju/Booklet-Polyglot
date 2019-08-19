@@ -165,7 +165,7 @@ which returns,
 
 !!!! Manhattan Distance
 Manhattan distance is a metric in which the distance between two points is the sum of the absolute differences of their Cartesian coordinates. In a simple way of saying it is the total sum of the difference between the x-coordinates and y-coordinates.
-For example, Manhattan distance between #(10 20 10) and #(10 20 20) is equal to absoluteValue(10-10) + absoluteValue(20-20) + absoluteValue(10-20).
+
 
 This can be done as,
 ==Usage== 
