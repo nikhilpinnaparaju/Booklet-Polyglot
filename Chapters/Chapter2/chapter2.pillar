@@ -1,16 +1,59 @@
-!!Edition and Templates
+!! Polyglot by example
 
-There is also a template system, you can find template in the folder ''_support/template''.
-Some template are already written, but if you want to have your own, you had two solutions:
--edit the existing template related to the format you want to change (recommanded)
--create your own template with its own name
+In this chapter, I will guide you through the complete functionality of the Polyglot project by showing examples of how each of those features can be used. This is a documentation of Polyglot written in a form of storytelling with data.
 
-You will found some template examples in ''_support/template'' folder to see how it works.
-The default template system is ''Mustache''.
+!!! Brown Corpus
+@brownCorpus
 
-Output directory's default name is ''book-result'' but you can change it in the pillar.conf file by editing the
-==OUTPUTDIRECTORY== variable
+The brown corpus is a standard corpus used in NLP. The Brown Corpus was compiled in the 1960s by Henry Kučera and W. Nelson Francis at Brown University, Providence, Rhode Island as a general corpus (text collection) in the field of corpus linguistics. It contains 500 samples of English-language text, totaling roughly one million words, compiled from works published in the United States in 1961.
+It is a simple text file of raw text that we will load into Pharo to use. It can be downloaded from *Brown>https://github.com/olekscode/NgramModel/blob/master/Corpora/brown.txt*.
+
+!!! Loading the data
+To use this file of text we will need to load it into our Pharo image. Now let's say that I have downloaded the text file to our system. Now let's look at how to load it.
+
+==Usage==
+[[[
+|file brown tokenizer tokens LM temp|
+
+"Loading the Data into our Pharo image"
+file := <path_to_training_corpus> asFileReference.
+brown := file contents.
+]]]
 
 
-+>figures/pharo.png|width=30+
-+>figures/rmod.png|width=30+
+!!! Installation
+To install Polyglot, go to the Playground (Ctrl\+O\+W) in your fresh Pharo image and execute the following Metacello script (select it and press Do-it button or Ctrl\+D):
+
+[[[language=smalltalk
+Metacello new
+  baseline: 'Polyglot';
+  repository: 'github://PolyMathOrg/Polyglot/src';
+  load.
+]]]
+
+In all keyboard shortcuts mentioned in this booklet the ''Ctrl'' key is for Windows and Linux. On Mac OS, use ''Cmd'' instead.
+
+!!!! Running the tests
+
+First thing you should do after installing Polyglot is open the Polyglot-Tests package in Test Runner (Ctrl\+O\+U) or System Browser (Ctrl\+O\+B) and make sure that all tests are passing. Polyglot is tested with around 100 unit tests which provide 90\% code coverage. If you see some failing tests, please go to the Polyglot repository on GitHub and open a related issue.
+
+
+!!! Tokenization
+
+The first step in any natural language processing task is ''Tokenization''. 
+
+Tokenization is the act of breaking up a sequence of strings into pieces such as words, keywords, phrases, symbols and other elements called tokens. Tokens can be individual words, phrases or even whole sentences.
+Tokenization in ''Polyglot'' can be done using the ''PGTokenizer'' package. ''PGTokenizer'' is the tokenization object class in ''Polyglot''.
+
+==Usage== 
+[[[
+|file brown tokenizer tokens LM temp|
+
+"Loading the Data into our Pharo image"
+file := <path_to_training_corpus> asFileReference.
+brown := file contents.
+
+"Converting raw text into an array of tokens"
+tokenizer := PGTokenizer new.
+tokens := tokenizer tokenize: brown.
+]]]
