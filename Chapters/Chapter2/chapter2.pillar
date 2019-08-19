@@ -1,16 +1,176 @@
-!!Edition and Templates
+!! Polyglot by example
 
-There is also a template system, you can find template in the folder ''_support/template''.
-Some template are already written, but if you want to have your own, you had two solutions:
--edit the existing template related to the format you want to change (recommanded)
--create your own template with its own name
+In this chapter, I will guide you through the complete functionality of the Polyglot project by showing examples of how each of those features can be used. This is a documentation of Polyglot written in a form of storytelling with data.
 
-You will found some template examples in ''_support/template'' folder to see how it works.
-The default template system is ''Mustache''.
+!!! Brown Corpus
+@brownCorpus
 
-Output directory's default name is ''book-result'' but you can change it in the pillar.conf file by editing the
-==OUTPUTDIRECTORY== variable
+The brown corpus is a standard corpus used in NLP. The Brown Corpus was compiled in the 1960s by Henry Kučera and W. Nelson Francis at Brown University, Providence, Rhode Island as a general corpus (text collection) in the field of corpus linguistics. It contains 500 samples of English-language text, totaling roughly one million words, compiled from works published in the United States in 1961.
+It is a simple text file of raw text that we will load into Pharo to use. It can be downloaded from *Brown>https://github.com/olekscode/NgramModel/blob/master/Corpora/brown.txt*.
+
+!!! Loading the data
+To use this file of text we will need to load it into our Pharo image. Now let's say that I have downloaded the text file to our system. Now let's look at how to load it.
+
+==Usage==
+[[[
+|file brown tokenizer tokens LM temp|
+
+"Loading the Data into our Pharo image"
+file := <path_to_training_corpus> asFileReference.
+brown := file contents.
+]]]
 
 
-+>figures/pharo.png|width=30+
-+>figures/rmod.png|width=30+
+!!! Installation
+To install Polyglot, go to the Playground (Ctrl\+O\+W) in your fresh Pharo image and execute the following Metacello script (select it and press Do-it button or Ctrl\+D):
+
+[[[language=smalltalk
+Metacello new
+  baseline: 'Polyglot';
+  repository: 'github://PolyMathOrg/Polyglot/src';
+  load.
+]]]
+
+In all keyboard shortcuts mentioned in this booklet the ''Ctrl'' key is for Windows and Linux. On Mac OS, use ''Cmd'' instead.
+
+!!!! Running the tests
+
+First thing you should do after installing Polyglot is open the Polyglot-Tests package in Test Runner (Ctrl\+O\+U) or System Browser (Ctrl\+O\+B) and make sure that all tests are passing. Polyglot is tested with around 100 unit tests which provide 90\% code coverage. If you see some failing tests, please go to the Polyglot repository on GitHub and open a related issue.
+
+
+!!! Tokenization
+
+The first step in any natural language processing task is ''Tokenization''. 
+
+Tokenization is the act of breaking up a sequence of strings into pieces such as words, keywords, phrases, symbols and other elements called tokens. Tokens can be individual words, phrases or even whole sentences.
+Tokenization in ''Polyglot'' can be done using the ''PGTokenizer'' package. ''PGTokenizer'' is the tokenization object class in ''Polyglot''.
+
+==Usage== 
+[[[
+|file brown tokenizer tokens |
+
+"Loading the Data into our Pharo image"
+file := '/home/cyber/Desktop/brown.txt' asFileReference.
+brown := file contents.
+
+"Converting raw text into an array of tokens"
+tokenizer := PGTokenizer new.
+tokens := tokenizer tokenize: brown.
+]]]
+
+Here's a bunch of different ways in which we can go about tokenizing,
+Here is the list of some accessors provided by ==DataSeries==. This list is incomplete. Many other accessors are inherited from ==OrderedCollection== class. They can come in handy but we do not discuss them in this booklet:
+
+[[[
+PGTokenizer >> sentenceTokenize:
+PGTokenizer >> tokenize:
+PGTokenizer >> tokenizeFlatten:
+PGTokenizer >> wordTokenize:
+]]]
+
+!!! Stemming
+In linguistic morphology and information retrieval, stemming is the process of reducing inflected words to their word stem, base or root form. 
+Stemming is used in tasks like building inverted indices for a search english. 
+Let's take a small sample from our Brown corpus and apply stemming to all the words in that.
+
+To do this ''PGPorterStemmer'' in the ''PGStemmer'' package in ''Polyglot''. This utilizes the base code from the Moose Information retrieval algos package for Pharo.
+
+==Usage==
+[[[
+|file brown tokenizer tokens firstSent|
+
+"Loading the Data into our Pharo image"
+file := '/home/cyber/Desktop/brown.txt' asFileReference.
+brown := file contents.
+
+"Converting raw text into an array of tokens"
+tokenizer := PGTokenizer new.
+tokens := tokenizer tokenize: brown.
+
+firstSent := tokens at: 1.
+firstSent collect: [ :each | PGPorterStemmer stemOf: each ]
+]]]
+
+!!! Part of Speech Tagging (POS Tagging)
+POS Tagging is the task of identifying the part-of-speech of every word in a particular sentence. The difficulty in the task lies in the fact that the same word in various sentences would be different parts of speech.
+Part of Speech tagging can be done using ''PGPosTagger'' in ''Polyglot''.
+Now let's say we want to POS Tag our Brown corpus.
+
+==Usage==
+[[[
+|file brown tokenizer tokens firstSent tagger|
+
+"Loading the Data into our Pharo image"
+file := '/home/cyber/Desktop/brown.txt' asFileReference.
+brown := file contents.
+
+"Converting raw text into an array of tokens"
+tokenizer := PGTokenizer new.
+tokens := tokenizer sentenceTokenize: brown.
+
+firstSent := tokens at: 1.
+tagger := PGNltkPosTagger new.
+tagger raw_parse: firstSent
+]]]
+
+!!! Some useful Metrics and Mathematical functions
+
+In NLP, once we have vector representations of either words or documents it is useful to have metrics defined to evaluate how similar 2 entities are.
+==PGMetrics== offers some commonly used similarity measures.
+A similarity measures is a measure of how much alike two data objects are, by measuring the distance between them based on the vector representations that we have acquired about the text bodies.
+
+Here is the list of mathematical operations that are applied to ==Array== :
+
+[[[
+PGMetrics >> cosineSimilarity:
+PGMetrics >> elementwiseProduct:
+PGMetrics >> euclideanDistance:
+PGMetrics >> manhattanDistance:
+]]]
+
+!!!! Cosine Similarity
+Cosine similarity metric finds the normalized dot product of the two attributes. By determining the cosine similarity, we would effectively try to find the cosine of the angle between the two objects. The cosine of 0° is 1, and it is less than 1 for any other angle.
+This is as simple as,
+==Usage== 
+[[[
+#(3 45 7 2) cosineSimilarity: #(2 54 13 15).
+]]]
+This results in an answer of ==0.9722==
+
+!!!! Elementwise Product
+Elementwise product is that you multiply the elements in corresponding positions in an array with each other.
+Example would be that the Elementwise product of #(1 2 3) and #(2 3 4) is #(2 6 12) as the first term of the result is the product of the first term of the 2 arrays being multiplied. Second term is the product of the 2nd term of the 2 arrays being multiplied and so on.
+
+This is done as,
+==Usage== 
+[[[
+#(1 2 3) elementwiseProd: #(3 4 5)
+]]]
+which returns,
+==#(3 8 15)==
+
+!!!! Euclidean Distance
+The Euclidean distance measures the length of a line segment connecting the two points. It is the most intuitive way of representing distance between two points.
+Mathematically, it is the sum of squares of differences of the 2 vector representations.
+
+For example, the Euclidean distance between #(0 3 4 5) euclideanDistance: #(7 6 3 -1) is ==sqrt( (0-7)^2 + (3-6)^2 + (4-3)^2 + (5 - (-1))^2 )==
+
+Done as,
+==Usage== 
+[[[
+#(0 3 4 5) euclideanDistance: #(7 6 3 -1).
+]]]
+which returns,
+==9.746794344808963==
+
+!!!! Manhattan Distance
+Manhattan distance is a metric in which the distance between two points is the sum of the absolute differences of their Cartesian coordinates. In a simple way of saying it is the total sum of the difference between the x-coordinates and y-coordinates.
+
+
+This can be done as,
+==Usage== 
+[[[
+#(10 20 10) manhattanDistance: #(10 20 20)
+]]]
+which returns,
+==10==
